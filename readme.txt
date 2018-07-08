@@ -5,3 +5,4 @@ Git tracks changes of files.
 Git operation manual.
 Creating a new branch is quick and simple.
 fix bug 101.
+manager git branch.
