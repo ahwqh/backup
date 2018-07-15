@@ -5,3 +5,5 @@ Git tracks changes of files.
 Git operation manual.
 Creating a new branch is quick and simple.
 manager git branch.
+add merge under fast forward mode.
+git push fatal.
