@@ -6,3 +6,4 @@ Git operation manual.
 Creating a new branch is quick and simple.
 fix bug 101.
 manager git branch.
+git tag v1.1.
