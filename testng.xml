@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="jdbcTemplate">
+    <test name="jdbcTemplate test">
+        <!-- groups>
+            <run>
+                <include name="g6"/>
+                <exclude name="g4"/>
+                <exclude name="g5"/>
+            </run>
+        </groups -->
+        <!-- 组依赖于类，所以class元素一定配置 -->
+        <classes>
+            <!-- class name="org.ws.j2ee.spring_jdbc.querybyrowmapper.QueryBySpringJdbcTest"/>
+            <class name="org.ws.j2ee.spring_jdbc.procedure.CallableStatementDaoImplTest"/>
+            <class name="org.ws.j2ee.spring_jdbc.blob.ExecuteBlobDaoImplTest"/>
+            <class name="org.ws.j2ee.spring_jdbc.blob.BlobDaoImplTest"/>
+            <class name="org.ws.j2ee.spring_jdbc.incrementer.IncrementerDaoImplTest"/ -->
+            <class name="org.ws.j2ee.spring_jdbc.rowset.RowSetDaoImplTest"/>
+        </classes>
+    </test>
+</suite>
