@@ -31,7 +31,7 @@ public class DataSourceTest
 		ctx = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 	}
 	
-//    @Test
+/*    @Test
     public void ds() throws Exception
     {
     	DataSource ds = ctx.getBean("ds2",DataSource.class);
@@ -53,7 +53,7 @@ public class DataSourceTest
     	ctx.close();
     }
     
-    @Test
+//    @Test
     public void tx() throws Exception
     {
     	PlatformTransactionManager ptm = ctx.getBean("tx",PlatformTransactionManager.class);
@@ -76,5 +76,5 @@ public class DataSourceTest
     	conn2 = DataSourceUtils.doGetConnection(ds);
     	TimeUnit.SECONDS.sleep(5);
     	Assert.assertTrue(conn1==conn2);
-    }
+    }*/
 }

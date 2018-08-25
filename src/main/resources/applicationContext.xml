@@ -55,5 +55,5 @@
 	  <property name="transactionManager" ref="tx"/>
 	</bean>
 	
-	<!-- tx:annotation-driven transaction-manager="tx"/ -->
+	<tx:annotation-driven transaction-manager="tx"/>
 </beans>
