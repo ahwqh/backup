@@ -55,5 +55,9 @@
 	  <property name="transactionManager" ref="tx"/>
 	</bean>
 	
+	<bean id="njt" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+	  <constructor-arg ref="datasource"/>
+	</bean>
+	
 	<tx:annotation-driven transaction-manager="tx"/>
 </beans>

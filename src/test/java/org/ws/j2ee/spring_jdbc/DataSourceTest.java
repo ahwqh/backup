@@ -31,7 +31,7 @@ public class DataSourceTest
 		ctx = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 	}
 	
-    @Test
+/*    @Test
     public void ds() throws Exception
     {
     	DataSource ds = ctx.getBean("datasource",DataSource.class);
@@ -53,7 +53,7 @@ public class DataSourceTest
     	ctx.close();
     }
     
-/*    @Test
+    @Test
     public void tx() throws Exception
     {
     	PlatformTransactionManager ptm = ctx.getBean("tx",PlatformTransactionManager.class);
