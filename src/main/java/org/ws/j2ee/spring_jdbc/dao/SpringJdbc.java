@@ -1,6 +1,7 @@
 package org.ws.j2ee.spring_jdbc.dao;
 
 import java.io.IOException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,10 +11,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -42,6 +45,18 @@ public class SpringJdbc
 	
 	@Value("${select_user_sql}")
 	private String select_user_sql;
+	
+	@Value("${select_user_sql2}")
+	private String select_user_sql2;
+	
+	@Value("${select_user_sql3}")
+	private String select_user_sql3;
+	
+	@Value("${select_single_int}")
+	private String select_single_int;
+	
+	@Value("${callablestatement_sql}")
+	private String callablestatement_sql;
 	
 	public int updateUser(Object[] args)
 	{
@@ -120,5 +135,53 @@ public class SpringJdbc
 			}
 		});
 		return user;
+	}
+	
+	public List<User> callbackWithRowMapper()
+	{
+		return jt.query(select_user_sql2,
+				new RowMapper<User>(){
+					public User mapRow(ResultSet rs,int rowNum) 
+							throws SQLException
+					{
+						User user = new User();
+						user.setId(rs.getInt(1));
+						user.setUsername(rs.getString(2));
+						user.setPassword(rs.getString(3));
+						user.setEmail(rs.getString(4));
+						user.setInfo(rs.getString(5));
+						user.setHeadImg(rs.getBytes(6));
+						user.setCreateTime(rs.getDate(7));
+						return user;
+					}
+				});
+	}
+	
+	public int returnSingleInt()
+	{
+		return jt.queryForInt(select_single_int);
+	}
+	
+	public List<Integer> returnList()
+	{
+		return jt.queryForList(select_single_int,Integer.class);
+	}
+	
+	public List<String> returnList2()
+	{
+		return jt.queryForList(select_user_sql3,String.class);
+	}
+	
+	public Object callableStatement(final int eno)
+	{
+		return jt.execute(callablestatement_sql,
+				new CallableStatementCallback<Object>(){
+			public Object doInCallableStatement(
+					CallableStatement cs) throws SQLException
+			{
+				cs.setInt(1,eno);
+				return null;
+			}
+		});
 	}
 }

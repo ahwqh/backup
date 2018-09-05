@@ -57,12 +57,57 @@ public class SpringJdbcTest extends DataSourceTest
     	Assert.assertTrue(userList.size()>0);
     }
     
-    @Test
+//    @Test
     public void test6() throws Exception
     {
     	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
     	User user = sj.callbackQuery2(1);
     	Assert.assertTrue(user.getUsername().equals("admin"));
+    }
+    
+//    @Test
+    public void test7() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	List<User> userList = 
+    			sj.callbackWithRowMapper();
+    	Assert.assertTrue(userList.size()==4);
+    }
+    
+//    @Test
+    public void test8() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	int result = sj.returnSingleInt();
+    	Assert.assertTrue(result == 4);
+    }
+    
+//    @Test
+    public void test9() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	List<Integer> list = sj.returnList();
+    	Assert.assertTrue(list.get(0)==4);
+    }
+    
+//    @Test
+    public void test10() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	List<String> userList = sj.returnList2();
+    	Assert.assertTrue(userList.size()==4);
+    }
+    
+    @Test
+    public void test11() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	sj.callableStatement(100);
     }
 }
