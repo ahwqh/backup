@@ -103,11 +103,27 @@ public class SpringJdbcTest extends DataSourceTest
     	Assert.assertTrue(userList.size()==4);
     }
     
-    @Test
+//    @Test
     public void test11() throws Exception
     {
     	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
     	sj.callableStatement(100);
+    }
+    
+//    @Test
+    public void test12() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	sj.updateBlob(new Object[]{1,"e:/pic/tp1.jpg"});   	
+    }
+    
+    @Test
+    public void test13() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	sj.queryBlob(new Object[]{1});
     }
 }

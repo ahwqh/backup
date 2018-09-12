@@ -1,6 +1,11 @@
 package org.ws.j2ee.spring_jdbc.dao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.CallableStatementCallback;
@@ -19,13 +25,23 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
+import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtractor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.jdbc.support.lob.LobCreator;
+import org.springframework.jdbc.support.lob.LobHandler;
+import org.springframework.jdbc.support.nativejdbc.NativeJdbcExtractor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.ws.j2ee.spring_jdbc.domain.User;
 
-import com.mysql.jdbc.Statement;
+
+
+
+
 
 @Repository
 @Transactional
@@ -57,6 +73,12 @@ public class SpringJdbc
 	
 	@Value("${callablestatement_sql}")
 	private String callablestatement_sql;
+	
+	@Value("${updateblob_sql}")
+	private String updateblob_sql;
+	
+	@Value("${queryblob_sql}")
+	private String queryblob_sql;
 	
 	public int updateUser(Object[] args)
 	{
@@ -159,7 +181,7 @@ public class SpringJdbc
 	
 	public int returnSingleInt()
 	{
-		return jt.queryForInt(select_single_int);
+		return jt.queryForObject(select_single_int,Integer.class);
 	}
 	
 	public List<Integer> returnList()
@@ -184,4 +206,44 @@ public class SpringJdbc
 			}
 		});
 	}
+	
+	public void updateBlob(final Object[] args) throws Exception
+	{
+		LobHandler handler = new DefaultLobHandler();
+		jt.execute(updateblob_sql, new AbstractLobCreatingPreparedStatementCallback(handler){
+			public void setValues(PreparedStatement ps,LobCreator creator) throws SQLException
+			{
+				int len=0;
+				InputStream is=null;
+				try
+				{
+					File file = new File((String)args[1]);
+					len = (int)file.length();
+					is = new FileInputStream(file);
+				}
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+				ps.setInt(2,(int)args[0]);
+				creator.setBlobAsBinaryStream(ps, 1, is,len);
+			}
+		});
+	}
+	
+	public void queryBlob(final Object[] args) throws Exception
+	{
+		final LobHandler handler = new DefaultLobHandler();
+		jt.query(queryblob_sql, args, new AbstractLobStreamingResultSetExtractor<byte[]>(){
+			public void streamData(ResultSet rs) throws SQLException,IOException
+			{
+				InputStream is = handler.getBlobAsBinaryStream(rs, 1);
+				OutputStream os = new FileOutputStream("d:/test/blob.jpg");
+				IOUtils.copy(is, os);
+				is.close();
+				os.close();
+			}
+		});
+	}
+		
 }
