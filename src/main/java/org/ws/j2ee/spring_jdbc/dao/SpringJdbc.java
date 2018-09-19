@@ -11,8 +11,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import oracle.sql.ROWID;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtrac
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -38,17 +41,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.ws.j2ee.spring_jdbc.domain.User;
 
-
-
-
-
-
 @Repository
 @Transactional
 public class SpringJdbc 
 {
 	@Autowired
     private JdbcTemplate jt;
+	
+	@Autowired
+	private DataFieldMaxValueIncrementer incre;
 	
 	@Autowired
 	private NamedParameterJdbcTemplate njt;
@@ -79,6 +80,9 @@ public class SpringJdbc
 	
 	@Value("${queryblob_sql}")
 	private String queryblob_sql;
+	
+	@Value("${seq_increment_sql}")
+	private String seq_increment_sql;
 	
 	public int updateUser(Object[] args)
 	{
@@ -246,4 +250,36 @@ public class SpringJdbc
 		});
 	}
 		
+	public int sequenceIncrement(final Object[] args) throws Exception
+	{
+		return jt.update(seq_increment_sql, new PreparedStatementSetter(){
+			public void setValues(PreparedStatement stmt) throws SQLException
+			{
+				stmt.setInt(1,incre.nextIntValue());
+				stmt.setString(2,(String)args[0]);
+				stmt.setString(3,(String)args[1]);
+				stmt.setString(4,(String)args[2]);
+			}
+		});
+	}
+	
+	public String sequenceIncrement2(final Object[] args) throws Exception
+	{
+		final KeyHolder kh = new GeneratedKeyHolder();
+		jt.update(new PreparedStatementCreator(){
+			public PreparedStatement createPreparedStatement(Connection conn) throws SQLException
+			{
+				PreparedStatement stmt = 
+						conn.prepareStatement(seq_increment_sql, Statement.RETURN_GENERATED_KEYS);
+				stmt.setInt(1,incre.nextIntValue());
+				stmt.setString(2,(String)args[0]);
+				stmt.setString(3,(String)args[1]);
+				stmt.setString(4,(String)args[2]);
+				return stmt;
+			}
+		}, kh);
+		Object key = kh.getKeys().get("ROWID");
+		ROWID id = (ROWID)key;
+		return id.stringValue();
+	}
 }

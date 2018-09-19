@@ -119,11 +119,29 @@ public class SpringJdbcTest extends DataSourceTest
     	sj.updateBlob(new Object[]{1,"e:/pic/tp1.jpg"});   	
     }
     
-    @Test
+//    @Test
     public void test13() throws Exception
     {
     	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
     	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
     	sj.queryBlob(new Object[]{1});
+    }
+    
+//    @Test
+    public void test14() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	int result = sj.sequenceIncrement(new Object[]{"Bob","123456","tom@xxx.com"});
+    	Assert.assertTrue(result==1);
+    }
+    
+    @Test
+    public void test15() throws Exception
+    {
+    	ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+    	SpringJdbc sj = ctx.getBean(SpringJdbc.class);
+    	String result = sj.sequenceIncrement2(new Object[]{"Ben","123456","ben@xxx.com"});
+    	System.out.println(result);
     }
 }

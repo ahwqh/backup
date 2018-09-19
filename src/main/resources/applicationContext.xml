@@ -63,5 +63,11 @@
 	  <constructor-arg ref="datasource"/>
 	</bean>
 	
+	<!-- 定义自增主键Bean -->
+	<bean id="sequence" class="org.springframework.jdbc.support.incrementer.OracleSequenceMaxValueIncrementer">
+	  <property name="dataSource" ref="datasource"/>
+	  <property name="incrementerName" value="seq_increment"/>
+	</bean>
+	
 	<tx:annotation-driven transaction-manager="tx"/>
 </beans>
