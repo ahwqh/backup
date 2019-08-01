@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Spring配置文件的根元素，使用spring-beans-3.0.xsd语义约束 -->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<context:property-placeholder location="config.ini" file-encoding="utf8"/>
+	<bean id="utf8" class="java.lang.String">
+	    <constructor-arg type="java.lang.String" value="utf-8"/>
+	</bean>
+	<context:component-scan base-package="org.ws.j2ee.spring_jdbc.."/>
+	<bean id="datasource" class="org.apache.commons.dbcp2.BasicDataSource"
+	    destroy-method="close">
+	  <property name="driverClassName" value="${driverClass}"/>
+	  <property name="url" value="${url}"/>
+	  <property name="username" value="${user}"/>
+	  <property name="password" value="${password}"/>
+	  <property name="validationQuery" value="${validationQuery}"/>
+	  <property name="testOnBorrow" value="${testOnBorrow}"/>
+	  <property name="initialSize" value="${initialSize}"/>
+	  <property name="maxIdle" value="${maxIdle}"/>
+	  <property name="minIdle" value="${minIdle}"/>	  
+	</bean>
+	
+	<!-- bean id="ds2" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+	   destroy-method="close">
+	  <property name="driverClass" value="${driverClass}"/>
+	  <property name="jdbcUrl" value="${url}"/>
+	  <property name="user" value="${user}"/>
+	  <property name="password" value="${password}"/>
+	  <property name="initialPoolSize" value="${initialPoolSize}"/>
+	  <property name="acquireIncrement" value="${acquireIncrement}"/>
+	  <property name="testConnectionOnCheckin" value="${testConnectionOnCheckin}"/>
+	</bean -->
+	
+	<bean id="tx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource" ref="datasource"/>
+	</bean>
+	
+	<bean id="extractor" 
+	    class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" lazy-init="true"/>
+	
+	<bean id="jt" class="org.springframework.jdbc.core.JdbcTemplate">
+	  <property name="dataSource" ref="datasource"/>
+	  <property name="nativeJdbcExtractor" ref="extractor"/>
+	</bean>
+	
+	<bean id="tm" class="org.springframework.transaction.support.TransactionTemplate">
+	  <property name="transactionManager" ref="tx"/>
+	</bean>
+	
+	<bean id="njt" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+	  <constructor-arg ref="datasource"/>
+	</bean>
+	
+	<!-- 定义自增主键Bean -->
+	<bean id="sequence" class="org.springframework.jdbc.support.incrementer.OracleSequenceMaxValueIncrementer">
+	  <property name="dataSource" ref="datasource"/>
+	  <property name="incrementerName" value="seq_increment"/>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="tx"/>
+</beans>
