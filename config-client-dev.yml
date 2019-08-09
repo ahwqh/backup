@@ -1,0 +1,3 @@
+server:
+  port: 10005
+client: client version 2
