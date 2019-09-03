@@ -1,2 +1,3 @@
-test remote repo
+test remote repo.
 gitee seems useless.
+don't connect git.
